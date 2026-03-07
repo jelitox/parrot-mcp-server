@@ -134,3 +134,12 @@ docker run -p 8081:8081 --env-file .env.api mcp-server
 ```
 
 The Dockerfile is configured to load `server.yaml`, which usually symlinks to your desired config in `mcp_servers/`.
+
+## 🤝 Community & Support
+
+*   **Issues**: [GitHub Tracker](https://github.com/phenobarbital/parrot-mcp-server/issues)
+*   **Discussion**: [GitHub Discussions](https://github.com/phenobarbital/parrot-mcp-server/discussions)
+*   **Contribution**: Pull requests are welcome! Please read `CONTRIBUTING.md`.
+
+---
+*Built with ❤️ by the Navigator Team*
