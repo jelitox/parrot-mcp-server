@@ -1,0 +1,35 @@
+[project]
+name = "parrot-mcp-server"
+version = "0.0.1"
+description = "Parrot MCP server"
+authors = [
+    {name = "Jesus Lara", email = "jesuslarag@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+
+dependencies = [
+    # parrot with AWS tools
+    "ai-parrot[mcp,llms]>=0.22.3",
+]
+
+production = [
+    "gunicorn",
+    "uvicorn",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# uv-specific configuration
+[tool.uv]
+package = false
+override-dependencies = [
+    "emoji==1.7.0",
+    "msal==1.32.0",
+    "jsonpickle==3.0.2",
+    "watchdog>=6.0.0",
+    "webdriver-manager==4.0.2",
+    "pyjwt==2.10.1",
+]
