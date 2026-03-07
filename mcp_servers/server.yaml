@@ -1,0 +1,24 @@
+MCPServer:
+  name: NAVAWSMCP
+  host: 0.0.0.0
+  port: 8081
+  transport: sse
+  enable_ssl: false
+  auth_method: api_key
+  api_key: MCP_AWS_SERVER_API_KEY
+  tools:
+    - CloudWatchToolkit:
+        aws_id: cloudwatch
+        default_log_group: fluent-bit-cloudwatch
+    - EC2Toolkit:
+        aws_id: monitoring
+    - ECRToolkit:
+        aws_id: monitoring
+    - RDSToolkit:
+        aws_id: monitoring
+    - EKSToolkit:
+        aws_id: monitoring
+    - GuardDutyToolkit:
+        aws_id: monitoring
+    - DocumentDBToolkit:
+        aws_id: monitoring

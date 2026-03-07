@@ -20,7 +20,7 @@ source .venv/bin/activate
 uv sync
 
 # or manually install ai-parrot:
-uv install ai-parrot[mcp,llms]
+uv pip install ai-parrot[mcp,llms]
 ```
 
 ### Create the environment file:
@@ -135,6 +135,89 @@ docker run -p 8081:8081 --env-file .env.api mcp-server
 
 The Dockerfile is configured to load `server.yaml`, which usually symlinks to your desired config in `mcp_servers/`.
 
+## Adding Custom Tools
+
+You can easily extend `parrot-mcp-server` by adding your own custom tools in the `plugins/tools/` directory. The MCP server loader automatically scans this directory to expose them as MCP endpoints.
+
+There are three main ways to build custom tools:
+
+### 1. Extending `AbstractTool`
+Useful for simple, single-purpose tools that implement a specific `_execute` action.
+
+```python
+# plugins/tools/my_tools.py
+import asyncio
+from parrot.tools.abstract import AbstractTool
+
+class MyCustomTool(AbstractTool):
+    name = "MyCustomTool"
+    description = "A custom tool that echoes text."
+    
+    async def _execute(self, text: str) -> str:
+        return f"Echo: {text}"
+```
+
+In `server.yaml`:
+```yaml
+MCPServer:
+  tools:
+    - MyCustomTool:
+```
+
+### 2. Extending `AbstractToolkit`
+Toolkits are designed to group multiple related tools into a single class. **Any public asynchronous method (not starting with `_`) inside an `AbstractToolkit` subclass is automatically exposed as its own standalone MCP tool.**
+
+This is ideal for wrapping an entire API or SDK where multiple functions share the same initialization parameters (like API keys or connections).
+
+```python
+# plugins/tools/my_toolkit.py
+from parrot.tools.toolkit import AbstractToolkit
+
+class MyApiToolkit(AbstractToolkit):
+    def __init__(self, api_key: str):
+        self.api_key = api_key
+        
+    async def get_user_info(self, user_id: int) -> str:
+        """Fetch user information."""
+        return f"User {user_id} info using key {self.api_key}"
+        
+    async def get_billing_status(self, user_id: int) -> str:
+        """Fetch billing details."""
+        return f"Billing status for {user_id}"
+```
+
+In `server.yaml`, provide the initialization arguments (they support automatic Env-Var replacement):
+```yaml
+MCPServer:
+  tools:
+    - MyApiToolkit:
+        api_key: MY_SECRET_API_KEY
+```
+*Result: The MCP server will expose two tools named `get_user_info` and `get_billing_status`.*
+
+### 3. Using the `@tool` Decorator
+For quick scripting, you can decorate a standard Python function. 
+
+```python
+# plugins/tools/simple_tools.py
+from parrot.tools.decorators import tool
+
+@tool(
+    name="SystemPing",
+    description="Returns a simple ping response"
+)
+async def ping_tool() -> str:
+    return "pong"
+```
+
+In `server.yaml`:
+```yaml
+MCPServer:
+  tools:
+    - ping_tool:
+```
+
+
 ## 🤝 Community & Support
 
 *   **Issues**: [GitHub Tracker](https://github.com/phenobarbital/parrot-mcp-server/issues)
@@ -142,4 +225,4 @@ The Dockerfile is configured to load `server.yaml`, which usually symlinks to yo
 *   **Contribution**: Pull requests are welcome! Please read `CONTRIBUTING.md`.
 
 ---
-*Built with ❤️ by the Navigator Team*
+*Built with ❤️ by the AI-Parrot Team*
