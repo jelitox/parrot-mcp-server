@@ -23,13 +23,17 @@ uv sync
 uv pip install ai-parrot[mcp,llms]
 ```
 
-### Create the environment file:
+### Create the environment file
 
 ```bash
-mkdir env
-kardex create
+mkdir -p env
+cat > env/.env <<'EOF'
+# Example for mcp_servers/server.yaml
+MCP_AWS_SERVER_API_KEY=change-me
+EOF
 ```
-This creates the entire NavConfig project structure at `parrot-mcp-server` (environment: dev)
+
+Load that file into your shell before starting the server, or pass it to Docker with `--env-file env/.env`.
 
 ### Creating a New Configuration
 
